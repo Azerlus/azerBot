@@ -1,0 +1,22 @@
+{
+  "name": "azerbot",
+  "version": "1.0.0",
+  "description": "Mon bot qui seras ptet jamais finis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Azerlus/azerBot.git"
+  },
+  "author": "Azerlus",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Azerlus/azerBot/issues"
+  },
+  "homepage": "https://github.com/Azerlus/azerBot#readme",
+  "dependencies": {
+    "discord.js": "^12.4.1"
+  }
+}
