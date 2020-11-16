@@ -14,6 +14,7 @@ module.exports = {
         }
 
         const avatarList = message.mentions.users.map(user => {
+            data.length = 0;
             data.push(`Here are ${user.username}'s info:`);
             data.push(`ID: ${user.id}`);
             data.push(`Username: ${user.username}`);

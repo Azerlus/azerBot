@@ -5,6 +5,8 @@ const { prefix, token, wordList } = require('./config.json');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
+const checkmessage = require(`./checkmessage.js`);
+
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
@@ -21,7 +23,8 @@ client.once('ready', () => {
 client.on('message', message => {
 	const messageContent = message.content.trim().split(/ +/);
 
-	client.commands.get('checkmessage').execute(message);
+	if(message.channel.type != 'dm')
+		checkmessage.execute(message);
 
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 

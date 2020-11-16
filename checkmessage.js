@@ -1,4 +1,4 @@
-const { wordList } = require('../config.json');
+const { wordList } = require('./config.json');
 
 module.exports = {
 	name: 'checkmessage',
