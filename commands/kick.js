@@ -14,5 +14,10 @@ module.exports = {
         
         kickReason = args.slice(1).join(' ');
         user.kick(kickReason);
+
+        if (!banReason)
+            message.channel.send(user.user.username + " has been kicked");
+        else
+            message.channel.send(user.user.username + " has been kicked for: " + kickReason);
 	},
 };

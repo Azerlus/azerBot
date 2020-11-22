@@ -1,63 +1,95 @@
-const { DiscordAPIError } = require("discord.js");
+const usefullFunctions = require("../usefullFunctions/usefullFunctions.js");
 
 module.exports = {
 	name: 'banlist',
-    description: 'Gives the list of the banned users of the guild.',
+    description: 'Gives the list of the banned users of the server allows to unban them.',
     guildonly: true,
 	execute(message, args) {
-        
+        //reaction filter
         const filter = (reaction, user) => {
-            return ['👍', '👎'].includes(reaction.emoji.name) && user.id === message.author.id;
+            return ['◀️', '❌', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
         };
 
+        //predef of embed of 
         const banUserEmbed = {
             title: "Banlist of the server:",
-            color: 6969,
+            color: 15158332,
         };
 
-        const data = [];
+        const banData = [];
+        const avatarURL = [];
         i = 0;
 
         message.guild.fetchBans().then(bans => {
             bans.map(bannedUser => {
-                desc = [];
-                banUserEmbed.description = null;
-                desc.push("\nHere's the list of all the banned members :\n");
-                desc.push('Username: ' + bannedUser.user.username + '#' + bannedUser.user.discriminator + '\n');
-                desc.push('ID: ' + bannedUser.user.id);
-                banUserEmbed.description = desc.join(' ');
-                banUserEmbed.thumbnail = {url: bannedUser.user.displayAvatarURL({dynamic: true})};
+                userDescription = [];
+                avatarURL.push(bannedUser.user.displayAvatarURL({dynamic: true}));
+
+                userDescription.push(`**Username:** ${bannedUser.user.username}#${bannedUser.user.discriminator}`);
+                userDescription.push(`\n**ID:** ${bannedUser.user.id}`);
+                if (bannedUser.reason)
+                    userDescription.push(`\n\n**Reason: ${bannedUser.reason}**`);
                 
-                data.push(desc);
-                i++;
+                banData.push(userDescription);
             });
 
-            message.channel.send({embed: banUserEmbed}).then(emoji => {
-                emoji.react('👍');
-                emoji.react('👎');
-                emoji.awaitReactions(filter, {max: 1, time: 60000, errors: ['time']}).then(collected => {
-                    const reaction = collected.first();
-        
-                    if (reaction.emoji.name === '👍') {
-                        userEmbed = {
-                            title: "Banlist of the server:",
-                            color: 6969,
-                            description: data[0].join(' '),
-                        };
+            banUserEmbed.description = banData[banData.length - 1].join(' ');
+            banUserEmbed.thumbnail = {url: avatarURL[banData.length - 1]};
+            usefullFunctions.setEmbedFooter(banUserEmbed, banData);
+            
+            message.channel.send({embed: banUserEmbed}).then(embedSent => {
+                embedSent.react('◀️');
+                embedSent.react('❌');
+                embedSent.react('▶️');
+                emojiCollector = embedSent.createReactionCollector(filter, {time: 60000 * 3});
 
-                        emoji.edit({embed: userEmbed});
+                i = banData.length - 1;
+
+                emojiCollector.on('collect', (reaction) => {
+                    if (reaction.emoji.name === '▶️')
+                    {
+                        if (i < banData.length - 1)
+                        {
+                            i++;
+                            userEmbed = {
+                                title: "Banlist of the server:",
+                                color:  15158332,
+                                description: banData[i].join(' '),
+                                thumbnail: { url: avatarURL[i] },
+                            };
+                            usefullFunctions.setEmbedFooter(userEmbed, banData);
+                            
+                            embedSent.edit({embed: userEmbed});
+                        }
                     }
-                    else {
-                        userEmbed = {
-                            title: "Banlist of the server:",
-                            color: 6969,
-                            description: data[0].join(' '),
-                        };
-                        emoji.edit({embed: userEmbed});
+                    else if (reaction.emoji.name === '❌')
+                    {
+                        //gets the ID of the current user
+                        currentUserId = banData[i][2].substring(4, banData[i][2].length);
+                        //gets the username of the current user
+                        currentUserUsername = banData[i][1].substring(10, banData[i][1].length);
+
+                        embedSent.guild.members.unban(currentUserId);
+                        
+                        console.log(banData[i][1] + 'has been unbanned');
+                        message.channel.send('@' + currentUserUsername + ' has been unbanned!');
                     }
-                })
-                .catch(collected => {
-                    message.reply('ERROR = = = ' + collected);
+                    else if (reaction.emoji.name === '◀️')
+                    {
+                        if (i > 0)
+                        {
+                            i--;
+                            userEmbed = {
+                                title: "Banlist of the server:",
+                                color:  15158332,
+                                description: banData[i].join(' '),
+                                thumbnail: { url: avatarURL[i] },
+                            };
+                            usefullFunctions.setEmbedFooter(userEmbed, banData);
+
+                            embedSent.edit({embed: userEmbed});
+                        }
+                    }
                 })
             });
         })
