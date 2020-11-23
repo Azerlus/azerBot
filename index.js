@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token, wordList } = require('./config.json');
+const { prefix, token, defaultRole } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -18,6 +18,11 @@ const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
 	console.log('Ready!');
+});
+
+client.on('guildMemberAdd', member => {
+	let role = member.guild.roles.cache.find(r => r.name === defaultRole);
+	member.roles.add(role);
 });
 
 client.on('message', message => {

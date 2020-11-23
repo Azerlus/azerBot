@@ -16,7 +16,7 @@ module.exports = {
             color: 15158332,
         };
 
-        const banData = [];
+        const bansData = [];
         const avatarURL = [];
         i = 0;
 
@@ -30,34 +30,32 @@ module.exports = {
                 if (bannedUser.reason)
                     userDescription.push(`\n\n**Reason: ${bannedUser.reason}**`);
                 
-                banData.push(userDescription);
+                bansData.push(userDescription);
             });
 
-            banUserEmbed.description = banData[banData.length - 1].join(' ');
-            banUserEmbed.thumbnail = {url: avatarURL[banData.length - 1]};
-            usefullFunctions.setEmbedFooter(banUserEmbed, banData);
+            banUserEmbed.description = bansData[bansData.length - 1].join(' ');
+            banUserEmbed.thumbnail = {url: avatarURL[bansData.length - 1]};
+            usefullFunctions.setEmbedFooter(banUserEmbed, bansData, bansData.length);
             
             message.channel.send({embed: banUserEmbed}).then(embedSent => {
-                embedSent.react('◀️');
-                embedSent.react('❌');
-                embedSent.react('▶️');
+                embedSent.react('◀️').then(() => embedSent.react('❌').then(() => embedSent.react('▶️')));
                 emojiCollector = embedSent.createReactionCollector(filter, {time: 60000 * 3});
 
-                i = banData.length - 1;
+                i = bansData.length - 1;
 
                 emojiCollector.on('collect', (reaction) => {
                     if (reaction.emoji.name === '▶️')
                     {
-                        if (i < banData.length - 1)
+                        if (i < bansData.length - 1)
                         {
                             i++;
                             userEmbed = {
                                 title: "Banlist of the server:",
                                 color:  15158332,
-                                description: banData[i].join(' '),
+                                description: bansData[i].join(' '),
                                 thumbnail: { url: avatarURL[i] },
                             };
-                            usefullFunctions.setEmbedFooter(userEmbed, banData);
+                            usefullFunctions.setEmbedFooter(userEmbed, bansData, i + 1);
                             
                             embedSent.edit({embed: userEmbed});
                         }
@@ -65,13 +63,16 @@ module.exports = {
                     else if (reaction.emoji.name === '❌')
                     {
                         //gets the ID of the current user
-                        currentUserId = banData[i][2].substring(4, banData[i][2].length);
+
+                        currentUserId = bansData[i][1].substring(8, bansData[i][1].length);
                         //gets the username of the current user
-                        currentUserUsername = banData[i][1].substring(10, banData[i][1].length);
+                        currentUserUsername = bansData[i][0].substring(14, bansData[i][0].length);
+
+                        console.log(currentUserId);
+                        console.log(currentUserUsername);
 
                         embedSent.guild.members.unban(currentUserId);
                         
-                        console.log(banData[i][1] + 'has been unbanned');
                         message.channel.send('@' + currentUserUsername + ' has been unbanned!');
                     }
                     else if (reaction.emoji.name === '◀️')
@@ -82,10 +83,10 @@ module.exports = {
                             userEmbed = {
                                 title: "Banlist of the server:",
                                 color:  15158332,
-                                description: banData[i].join(' '),
+                                description: bansData[i].join(' '),
                                 thumbnail: { url: avatarURL[i] },
                             };
-                            usefullFunctions.setEmbedFooter(userEmbed, banData);
+                            usefullFunctions.setEmbedFooter(userEmbed, bansData, i + 1);
 
                             embedSent.edit({embed: userEmbed});
                         }
