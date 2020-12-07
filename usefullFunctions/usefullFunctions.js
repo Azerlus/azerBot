@@ -7,5 +7,13 @@ module.exports = {
                 embedMessage.footer = { text: `${i}\/${data.length}` }
     
         return embedMessage;
+    },
+
+    getGuildID: function getGuildID(message)
+    {
+        guildID = message.guild.id;
+
+        console.log(guildID);
+        return guildID;
     }
  }

@@ -1,11 +1,13 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token, defaultRole } = require('./config.json');
+const { prefix, token, defaultRole, configGuild } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
+const getRole = require(`./getRole.js`);
 const checkmessage = require(`./checkmessage.js`);
+const usefullFunctions = require('./usefullFunctions/usefullFunctions');
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -18,6 +20,8 @@ const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
 	console.log('Ready!');
+	let serv = client.guilds.cache.get(configGuild);
+	getRole.execute(serv);
 });
 
 client.on('guildMemberAdd', member => {
@@ -29,7 +33,10 @@ client.on('message', message => {
 	const messageContent = message.content.trim().split(/ +/);
 
 	if(message.channel.type != 'dm')
+	{
+		usefullFunctions.getGuildID(message);
 		checkmessage.execute(message);
+	}
 
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
