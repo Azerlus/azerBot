@@ -1,8 +1,8 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token, defaultRole, configGuild } = require('./config.json');
+const { prefix, token, roles, configGuild } = require('./config.json');
 
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 client.commands = new Discord.Collection();
 
 const getRole = require(`./getRole.js`);
@@ -25,8 +25,8 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', member => {
-	let role = member.guild.roles.cache.find(r => r.name === defaultRole);
-	member.roles.add(role);
+	// let role = member.guild.roles.cache.find(r => r.name === defaultRole);
+	// member.roles.add(role);
 });
 
 client.on('message', message => {
