@@ -10,7 +10,6 @@ module.exports = {
             return ['◀️', '❌', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
         };
 
-        //predef of embed of 
         const banUserEmbed = {
             title: "Banlist of the server:",
             color: 15158332,
@@ -39,7 +38,8 @@ module.exports = {
             
             message.channel.send({embed: banUserEmbed}).then(embedSent => {
                 embedSent.react('◀️').then(() => embedSent.react('❌').then(() => embedSent.react('▶️')));
-                emojiCollector = embedSent.createReactionCollector(filter, {time: 60000 * 3});
+                
+                emojiCollector = embedSent.createReactionCollector(filter, { time: 60000 * 3 });
 
                 i = bansData.length - 1;
 
@@ -63,7 +63,6 @@ module.exports = {
                     else if (reaction.emoji.name === '❌')
                     {
                         //gets the ID of the current user
-
                         currentUserId = bansData[i][1].substring(8, bansData[i][1].length);
                         //gets the username of the current user
                         currentUserUsername = bansData[i][0].substring(14, bansData[i][0].length);

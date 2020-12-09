@@ -6,12 +6,11 @@ module.exports = {
 	execute(message) {
         const messageContent = message.content.trim().split(/ +/);
         messageContent.map(content =>{
-            i = 0;
-            while(i != wordList.length)
-            {
-                if(content.toLowerCase() == wordList[i][0])
-                    return message.channel.send(wordList[i][1]);
-                i++;
+            for (const [key, value] of Object.entries(wordList)) {
+                if(content.toLowerCase() == key && !message.author.bot)
+                {
+                    return message.channel.send(value);
+                }
             }
         })
 	},

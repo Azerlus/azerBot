@@ -13,7 +13,6 @@ module.exports = {
     {
         guildID = message.guild.id;
 
-        console.log(guildID);
         return guildID;
     }
  }
