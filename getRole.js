@@ -14,18 +14,18 @@ module.exports = {
 
                 if (!lastMessage) {
                     channel.send(roleMessage).then(message => {
-                        roleSelector(message, guild, filter);                        
+                        roleSelector(message, guild, filter);
                     });
                 }
                 else
                     roleSelector(lastMessage, guild, filter);
             })
-            .catch(console.error);
+                .catch(console.error);
         }
     },
 };
 
-function roleSelector(message, guild, filter){
+function roleSelector(message, guild, filter) {
     emojiCollector = message.createReactionCollector(filter);
     removeEmojiCollector = message.createReactionCollector(filter, { dispose: true });
 

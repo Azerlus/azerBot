@@ -5,6 +5,9 @@ module.exports = {
     description: 'Send details of a user.',
     aliases: ['user'],
     usage: ['user'],
+    guildOnly: true,
+    args: true,
+    cooldown: 6,
     execute(message) {
         const filter = (reaction, user) => {
             return ['◀️', '▶️'].includes(reaction.emoji.name) && user.id === message.author.id;
@@ -21,7 +24,7 @@ module.exports = {
         if (!message.mentions.users.size) {
             usersData.push(`**ID:** ${message.author.id}\n`);
             usersData.push(`**Username:** ${message.author.username}#${userMentionned.discriminator}\n`);
-            
+
             avatarURL.push(message.author.displayAvatarURL({ dynamic: true }));
 
             userInfosEmbed.description = usersData.join(' ');
@@ -61,43 +64,39 @@ module.exports = {
         userInfosEmbed.thumbnail = { url: avatarURL[usersData.length - 1] };
         usefullFunctions.setEmbedFooter(userInfosEmbed, usersData, usersData.length);
 
-        message.channel.send({embed: userInfosEmbed}).then(embedSent => {
+        message.channel.send({ embed: userInfosEmbed }).then(embedSent => {
             embedSent.react('◀️').then(() => embedSent.react('▶️'));
-            emojiCollector = embedSent.createReactionCollector(filter, {time: 60000 * 3});
+            emojiCollector = embedSent.createReactionCollector(filter, { time: 60000 * 3 });
 
             i = usersData.length - 1;
             console.log(usersData);
             emojiCollector.on('collect', (reaction) => {
-                if (reaction.emoji.name === '▶️')
-                {
-                    if (i < usersData.length - 1)
-                    {
+                if (reaction.emoji.name === '▶️') {
+                    if (i < usersData.length - 1) {
                         i++;
                         userEmbed = {
                             title: "Info of the user:",
-                            color:  3066993,
-                            description: usersData[i].join(' '),
-                            thumbnail: { url: avatarURL[i] },
-                        };
-                        usefullFunctions.setEmbedFooter(userEmbed, usersData, i + 1);
-                        
-                        embedSent.edit({embed: userEmbed});
-                    }
-                }
-                else if (reaction.emoji.name === '◀️')
-                {
-                    if (i > 0)
-                    {
-                        i--;
-                        userEmbed = {
-                            title: "Info of the user:",
-                            color:  3066993,
+                            color: 3066993,
                             description: usersData[i].join(' '),
                             thumbnail: { url: avatarURL[i] },
                         };
                         usefullFunctions.setEmbedFooter(userEmbed, usersData, i + 1);
 
-                        embedSent.edit({embed: userEmbed});
+                        embedSent.edit({ embed: userEmbed });
+                    }
+                }
+                else if (reaction.emoji.name === '◀️') {
+                    if (i > 0) {
+                        i--;
+                        userEmbed = {
+                            title: "Info of the user:",
+                            color: 3066993,
+                            description: usersData[i].join(' '),
+                            thumbnail: { url: avatarURL[i] },
+                        };
+                        usefullFunctions.setEmbedFooter(userEmbed, usersData, i + 1);
+
+                        embedSent.edit({ embed: userEmbed });
                     }
                 }
             })

@@ -2,7 +2,9 @@ module.exports = {
 	name: 'reload',
 	description: 'Reloads a command',
 	aliases: ['load'],
+	guildOnly: false,
 	args: true,
+	cooldown: 6,
 	execute(message, args) {
 		const commandName = args[0].toLowerCase();
 		const command = message.client.commands.get(commandName)

@@ -1,10 +1,11 @@
 module.exports = {
-	name: 'ban',
+    name: 'ban',
     description: 'Ban the mentionned user.',
     usage: '[user] [reason]',
-    guildonly: true,
-	cooldown: 60,
-	execute(message, args) {
+    guildOnly: true,
+    args: true,
+    cooldown: 60,
+    execute(message, args) {
         if (!message.mentions.members.size)
             return message.reply("you need to mention only one user!");
 
@@ -13,11 +14,11 @@ module.exports = {
             return message.reply("you need to mention a valid user!");
 
         banReason = args.slice(1).join(' ');
-        user.ban({reason: banReason});
+        user.ban({ reason: banReason });
 
         if (!banReason)
             message.channel.send(user.user.username + " has been banned");
         else
             message.channel.send(user.user.username + " has been banned for: " + banReason);
-	},
+    },
 };
